@@ -1,4 +1,4 @@
-import { Router, Route } from "wouter";
+import { Router, Route, Switch } from "wouter";
 import { AppStateProvider } from "@/lib/store";
 import { Home } from "@/pages/Home";
 import { Setup } from "@/pages/Setup";
@@ -10,11 +10,13 @@ function App() {
   return (
     <AppStateProvider>
       <Router>
-        <Route path="/" component={Home} />
-        <Route path="/setup" component={Setup} />
-        <Route path="/interview" component={Interview} />
-        <Route path="/feedback" component={Feedback} />
-        <Route path="*" component={NotFound} />
+        <Switch>
+          <Route path="/" component={Home} />
+          <Route path="/setup" component={Setup} />
+          <Route path="/interview" component={Interview} />
+          <Route path="/feedback" component={Feedback} />
+          <Route path="*" component={NotFound} />
+        </Switch>
       </Router>
     </AppStateProvider>
   );
