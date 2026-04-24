@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { AnimatedBackground } from "@/components/AnimatedBackground";
 import { useAppState, Role, Mode, Round, Personality } from "@/lib/store";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -24,16 +25,17 @@ export function Setup() {
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center p-6">
+    <div className="h-screen w-full flex flex-col items-center justify-center p-6 relative overflow-hidden">
+      <AnimatedBackground particleCount={18} />
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="w-full max-w-3xl space-y-10"
+        className="relative z-10 w-full max-w-3xl max-h-[calc(100vh-3rem)] overflow-y-auto space-y-10 scrollbar-hide"
       >
         <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight">Session Setup</h1>
-          <p className="text-muted-foreground">Configure your AI mock interview experience.</p>
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight glow-text">Session Setup</h1>
+          <p className="text-muted-foreground text-lg">Configure your AI mock interview experience.</p>
         </div>
 
         <div className="space-y-8">
@@ -123,23 +125,28 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 function SelectCard({ selected, onClick, label }: { selected: boolean; onClick: () => void; label: string }) {
   return (
-    <Card
-      onClick={onClick}
-      className={cn(
-        "relative p-4 cursor-pointer transition-all duration-200 flex items-center justify-between group",
-        selected 
-          ? "border-primary bg-primary/10 glow-border" 
-          : "border-border hover:border-primary/50 hover:bg-card/80"
-      )}
+    <motion.div
+      whileHover={{ scale: 1.02 }}
+      transition={{ type: "spring", stiffness: 400, damping: 17 }}
     >
-      <span className={cn("font-medium", selected ? "text-primary glow-text" : "text-foreground")}>
-        {label}
-      </span>
-      {selected && (
-        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}>
-          <Check className="w-5 h-5 text-primary" />
-        </motion.div>
-      )}
-    </Card>
+      <Card
+        onClick={onClick}
+        className={cn(
+          "relative p-6 cursor-pointer transition-all duration-300 flex items-center justify-between group glass rounded-2xl border-2",
+          selected 
+            ? "border-primary/60 bg-primary/15 glow shadow-[0_0_20px_rgba(59,130,246,0.3)]" 
+            : "border-white/10 hover:border-primary/40 hover:bg-white/5 hover:shadow-[0_0_15px_rgba(59,130,246,0.2)]"
+        )}
+      >
+        <span className={cn("font-semibold text-lg transition-colors duration-300", selected ? "text-primary glow-text" : "text-white/90")}>
+          {label}
+        </span>
+        {selected && (
+          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 400 }}>
+            <Check className="w-6 h-6 text-primary" />
+          </motion.div>
+        )}
+      </Card>
+    </motion.div>
   );
 }

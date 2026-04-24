@@ -6,14 +6,14 @@ import { Button } from "@/components/ui/button";
 
 export function Home() {
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center p-6 relative overflow-hidden">
+    <div className="h-screen w-full flex flex-col items-center justify-center p-6 relative overflow-hidden">
       <AnimatedBackground particleCount={22} />
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.9, ease: "easeOut" }}
-        className="z-10 flex flex-col items-center text-center space-y-10"
+        className="z-10 flex flex-col items-center text-center space-y-10 max-h-full"
       >
         <Logo />
 

@@ -57,18 +57,21 @@ export function Interview() {
   // Tracks the last spoken question id so re-renders never replay it.
   const currentQuestionId = questions[currentIndex]?.id ?? null;
   useEffect(() => {
-    if (!personality || !currentQuestionId) return;
+    if (!personality || !currentQuestionId || questions.length === 0) return;
     if (lastSpokenIdRef.current === currentQuestionId) return;
     const q = questions[currentIndex];
     if (!q) return;
     lastSpokenIdRef.current = currentQuestionId;
 
+    // Cancel any existing speech before speaking new question
+    cancelSpeech();
+    
     speakText(q.text, personality, {
       key: `q-${currentQuestionId}`,
       onStart: () => setIsSpeaking(true),
       onEnd: () => setIsSpeaking(false),
     });
-  }, [currentQuestionId, personality]);
+  }, [currentQuestionId, personality, questions.length]);
 
   // Timer
   useEffect(() => {
@@ -176,7 +179,17 @@ export function Interview() {
     }
   };
 
-  if (questions.length === 0) return null;
+  if (questions.length === 0) {
+    return (
+      <div className="h-screen w-full flex items-center justify-center relative overflow-hidden">
+        <AnimatedBackground particleCount={14} />
+        <div className="relative z-10 text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-white/70">Loading interview questions...</p>
+        </div>
+      </div>
+    );
+  }
 
   const currentQ = questions[currentIndex];
   const progress = (currentIndex / questions.length) * 100;
@@ -217,10 +230,10 @@ export function Interview() {
   };
 
   return (
-    <div className="min-h-screen w-full relative overflow-hidden">
+    <div className="h-screen w-full relative overflow-hidden">
       <AnimatedBackground particleCount={14} />
 
-      <div className="relative z-10 min-h-screen w-full flex flex-col p-4 md:p-6 lg:p-8 gap-6">
+      <div className="relative z-10 h-screen w-full flex flex-col p-4 md:p-6 lg:p-8 gap-6 overflow-y-auto">
         {/* Top bar */}
         <motion.header
           initial={{ opacity: 0, y: -20 }}
@@ -291,7 +304,7 @@ export function Interview() {
                   value={answerText}
                   onChange={(e) => setAnswerText(e.target.value)}
                   placeholder="Type your answer, or tap the mic to speak..."
-                  className="min-h-[170px] text-base md:text-lg p-4 pr-14 resize-y bg-background/40 border-border/60 focus-visible:ring-primary/40"
+                  className="min-h-[170px] text-base md:text-lg p-4 pr-14 resize-y bg-white/5 border-white/20 text-white placeholder:text-white/40 focus-visible:ring-primary/40 focus-visible:border-primary/40 transition-all duration-200"
                 />
                 <button
                   type="button"

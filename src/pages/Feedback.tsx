@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { motion } from "framer-motion";
 import { useAppState } from "@/lib/store";
+import { AnimatedBackground } from "@/components/AnimatedBackground";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { RotateCcw, CheckCircle2, AlertCircle, ArrowUpRight } from "lucide-react";
@@ -89,7 +90,17 @@ export function Feedback() {
     });
   }, [answers]);
 
-  if (!feedback) return null;
+  if (!feedback) {
+    return (
+      <div className="h-screen w-full flex items-center justify-center relative overflow-hidden">
+        <AnimatedBackground particleCount={16} />
+        <div className="relative z-10 text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-white/70">Generating your feedback...</p>
+        </div>
+      </div>
+    );
+  }
 
   const handleRestart = () => {
     reset();
@@ -97,19 +108,20 @@ export function Feedback() {
   };
 
   return (
-    <div className="min-h-screen w-full p-6 md:p-10 flex flex-col items-center">
+    <div className="h-screen w-full p-6 md:p-10 flex flex-col items-center relative overflow-hidden">
+      <AnimatedBackground particleCount={16} />
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-5xl space-y-10"
+        className="relative z-10 w-full max-w-5xl max-h-[calc(100vh-3rem)] overflow-y-auto space-y-10 scrollbar-hide"
       >
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6 glass rounded-3xl p-8">
           <div className="space-y-2 text-center md:text-left">
-            <h1 className="text-4xl font-bold tracking-tight">Interview Completed</h1>
-            <p className="text-muted-foreground text-lg">Here is your AI-generated performance review.</p>
+            <h1 className="text-4xl md:text-5xl font-bold tracking-tight glow-text">Interview Completed</h1>
+            <p className="text-white/70 text-lg">Here is your AI-generated performance review.</p>
           </div>
           
-          <div className="relative flex items-center justify-center w-32 h-32 rounded-full border-4 border-primary/20 glow">
+          <div className="relative flex items-center justify-center w-32 h-32 rounded-full border-4 border-primary/40 glow">
             <svg className="absolute inset-0 w-full h-full -rotate-90">
               <circle
                 cx="64" cy="64" r="60"
@@ -162,21 +174,26 @@ export function Feedback() {
 
 function FeedbackCard({ title, items, icon, className }: { title: string, items: string[], icon: React.ReactNode, className?: string }) {
   return (
-    <Card className={`bg-card/50 ${className}`}>
-      <CardHeader className="pb-3 flex flex-row items-center gap-3 space-y-0">
-        {icon}
-        <CardTitle className="text-lg">{title}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <ul className="space-y-3">
-          {items.map((item, i) => (
-            <li key={i} className="flex items-start text-sm text-muted-foreground">
-              <span className="mr-2 mt-1 w-1.5 h-1.5 rounded-full bg-muted-foreground/50 shrink-0" />
-              <span className="leading-relaxed">{item}</span>
-            </li>
-          ))}
-        </ul>
-      </CardContent>
-    </Card>
+    <motion.div
+      whileHover={{ scale: 1.03, y: -4 }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+    >
+      <Card className={`glass border-2 rounded-2xl transition-all duration-300 hover:shadow-[0_20px_40px_rgba(59,130,246,0.2)] ${className}`}>
+        <CardHeader className="pb-3 flex flex-row items-center gap-3 space-y-0">
+          {icon}
+          <CardTitle className="text-lg font-bold tracking-wide">{title}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ul className="space-y-3">
+            {items.map((item, i) => (
+              <li key={i} className="flex items-start text-sm text-white/75 leading-relaxed">
+                <span className="mr-3 mt-1.5 w-2 h-2 rounded-full bg-gradient-to-r from-primary to-primary/50 shrink-0" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 }
